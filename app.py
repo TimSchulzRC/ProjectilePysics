@@ -32,6 +32,12 @@ def redrawWindow():
 
 golfBall = ball(300, 494, 5, (255, 255, 255))
 
+x = 0
+y = 0
+time = 0
+power = 0
+angle = 0
+shoot = False
 
 run = True
 while run:
@@ -41,3 +47,12 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if shoot == False:
+                shoot = True
+                x = golfBall.x
+                y = golfBall.y
+                time = 0
+                power = math.sqrt((line[1][1]-line[0][1])
+                                  ** 2 + (line[1][0]-line[0][0])**2)
+                print(power)
