@@ -20,7 +20,16 @@ class ball(object):
 
     @staticmethod
     def ballPath(startx, starty, power, ang, time):
-        pass
+        velx = math.cos(angle) * power
+        vely = math.sin(angle) * power
+
+        distX = (velx * time)
+        distY = (vely * time) + ((-4.9 * (time**2))/2)
+
+        newx = round(distX + startx)
+        newy = round(starty - distY)
+
+        return(newx, newy)
 
 
 def redrawWindow():
@@ -28,6 +37,26 @@ def redrawWindow():
     golfBall.draw(win)
     pygame.draw.line(win, (255, 255, 255), line[0], line[1])
     pygame.display.update()
+
+
+def findAngle(pos):
+    sX = golfBall.x
+    sY = golfBall.y
+    try:
+        angle = math.atan((sY - pos[1]) / (sX - pos[0]))
+    except:
+        angle = math.pi/2
+
+    if pos[1] < sY and pos[0] > sX:
+        angle = abs(angle)
+    elif pos[1] < sY and pos[0] < sX:
+        angle = math.pi - angle
+    elif pos[1] > sY and pos[0] < sX:
+        angle = math.pi - abs(angle)
+    elif pos[1] > sY and pos[0] > sX:
+        angle = (math.pi * 2) - angle
+
+    return angle
 
 
 golfBall = ball(300, 494, 5, (255, 255, 255))
@@ -41,6 +70,17 @@ shoot = False
 
 run = True
 while run:
+
+    if shoot:
+        if golfBall.y < 500 - golfBall.radius:
+            time += 0.01
+            po = ball.ballPath(x, y, power, angle, time)
+            golfBall.x = po[0]
+            golfBall.y = po[1]
+        else:
+            shoot = False
+            golfBall.y = 494
+
     pos = pygame.mouse.get_pos()
     line = [(golfBall.x, golfBall.y), pos]
     redrawWindow()
@@ -54,5 +94,5 @@ while run:
                 y = golfBall.y
                 time = 0
                 power = math.sqrt((line[1][1]-line[0][1])
-                                  ** 2 + (line[1][0]-line[0][0])**2)
-                print(power)
+                                  ** 2 + (line[1][0]-line[0][0])**2)/8
+                angle = findAngle(pos)
